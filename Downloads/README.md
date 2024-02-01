@@ -1,1 +1,1 @@
-cherry.png is my background
+wallpaper.jpg is my background
