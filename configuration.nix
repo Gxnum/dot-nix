@@ -1,9 +1,4 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
-
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -30,6 +25,7 @@
     "electron-25.9.0"
   ];
   nixpkgs.config.allowUnfree = true;
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Set your time zone.
   time.timeZone = "Europe/Athens";
@@ -45,6 +41,7 @@
     LC_NAME = "el_GR.UTF-8";
     LC_NUMERIC = "el_GR.UTF-8";
     LC_PAPER = "el_GR.UTF-8";
+
     LC_TELEPHONE = "el_GR.UTF-8";
     #LC_TIME = "el_GR.UTF-8";
   };
@@ -70,8 +67,6 @@
 	 dmenu
 	 i3status
 	 i3blocks
-          i3-rounded
-          i3altlayout
 	];
       };
       desktopManager.gnome.enable = true;
@@ -114,6 +109,7 @@
   services.pipewire = {
     enable = true;
     alsa.enable = true;
+
     alsa.support32Bit = true;
     pulse.enable = true;
     wireplumber.enable = true;
@@ -142,13 +138,11 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  # Waydroid for Guardian Tales
-  virtualisation.waydroid.enable = true;
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     (discord.override {withVencord = true;})
+  # apps
     wget
     git
     vim
@@ -160,57 +154,61 @@
     xdg-desktop-portal-hyprland
     kitty
     waybar
-    hyprpaper
     swaybg
     mako
     grimblast
     libnotify
+    flatpak
     btop
     home-manager
     wl-clipboard
     fzf
-    fzf-zsh
-    zsh
     eza
-    oh-my-zsh
-    zsh-powerlevel10k
-    zsh-fzf-tab
     steam
     qpwgraph
-    i3
+    gnome.gnome-session
     xorg.xinit
     xorg.xauth
     r2modman
     neofetch
     xwaylandvideobridge
     mpv
-    swaynotificationcenter
     meslo-lgs-nf
     cava
-    cinnamon.nemo
-    obs-studio
     xarchiver
     starship
     blesh
     gnome.quadrapassel
-    kickoff
-    tty-clock
-    eww
     quickemu
     quickgui
     killall
     gimp
-    sassc
-    cava
-    mpd
+    fuzzel 
+    wlogout
+    pmutils
+    molly-guard
+    wine
+    flatpak
+    pulsemixer
+    skypeforlinux
+    wl-color-picker
+    libjpeg
+    minecraft
+    loupe
+    gnome.gnome-tweaks
+    libadwaita
+    bottles
+    fragments
+    celluloid
+    graphs
+    escrotum
+    gradience
+    
   ];
 
   # Programs
   programs = {
-    hyprland = { 
-      enable = true;
-    };
-    waybar.enable = true;
+    hyprland.enable = true;
     bash = {
       blesh.enable = true;
       shellAliases = {
@@ -224,8 +222,10 @@
 	vnix="sudo vim /etc/nixos/configuration.nix";
 	vnixh="sudo vim /etc/nixos/hardware-configuration.nix";
 	nixr="sudo nixos-rebuild switch";
-        vhome="vim ~/.config/home-manager/home.nix";
-        homer="home-manager switch";
+	vflake="vim ~/flake.nix";
+	rst="sudo alsactl restore && sudo alsactl store";
+        #vhome="vim ~/.config/home-manager/home.nix";
+        #homer="home-manager switch";
         hypr="Hyprland";
       };
     };
@@ -233,36 +233,10 @@
       enable = true;
       settings = {
 	add_newline = true;
-        format = "[](fg:#DFA7E7)[$directory](bg:#DFA7E7)[](fg:#DFA7E7 bg:#A8C5E6)$git_branch[](#A8C5E6 bg:#A8E5E6)$time[](#A8E5E6 bg:none) $all$character";
-        directory = { style = "bg:#DFA7E7 fg:#161616"; home_symbol = " ~";  };
-	git_branch = { format = "[ $symbol$branch ]($style)"; style = "bg:#A8C5E6 fg:#161616";  };
-	git_status = { format = "[ $all_status$ahead_behind ]($style)"; style = "bg:#A8E5E6 fg:#161616";  };
-	time = { disabled = true; format = "[ $time ]($style)"; style = "bg:#A8C5E6 fg:#161616";  };
-      };
-    };
-    zsh = {
-      enable = false;
-      syntaxHighlighting.enable = true;
-      autosuggestions.enable = true;
-      promptInit = "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-      shellAliases = {
-        grep = "grep --color=auto";
-	ls="eza -s size -a --icons=always --hyperlink";
-        mv="mv -v";
-	cp="cp -vr";
-	rm="rm -vrf";
-        v="vim";
-	vhypr="vim ~/.config/hypr/hyprland.conf";
-	vnix="sudo vim /etc/nixos/configuration.nix";
-	vnixh="sudo vim /etc/nixos/hardware-configuration.nix";
-	nixr="sudo nixos-rebuild switch";
-        vhome="vim ~/.config/home-manager/home.nix";
-        homer="home-manager switch";
-        hypr="Hyprland";
-      };
-      ohMyZsh = {
-	enable = true;
-	plugins = [ "sudo" ];
+        format = "[](fg:#78afe3)[$directory](bg:#78afe3)[](fg:#78afe3 bg:#5784b5)$git_branch[](#5784b5 bg:#416994)$time[](#416994 bg:none) $all$character";
+        directory = { style = "bg:#78afe3 fg:#161616"; home_symbol = " ~"; read_only_style = "bg:#78afe3 fg:#161616"; };
+	git_branch = { format = "[ $symbol$branch ]($style)"; style = "bg:#5784b5 fg:#161616";  };
+	time = { disabled = true; format = "[ $time ]($style)"; style = "bg:#5784b5 fg:#161616";  };
       };
     };
   };
@@ -271,7 +245,7 @@
   # Home Manager
   home-manager.users.bill = { pkgs, ... }: {
     home.packages = [
-    ];
+    ]; # Color accent = #78afe3
 
     services = {
       mako = {
@@ -289,21 +263,142 @@
 	anchor = "top-right";
 	
 	backgroundColor = "#161616b3";
-	textColor = "#DFA7E7";
-	borderColor = "#DFA7E7";
+	textColor = "#78afe3";
+	borderColor = "#78afe3";
         defaultTimeout = 4000;
 	progressColor = "over #433E4A";	
       };
     };
 
+    programs.fuzzel = {
+      enable = true;
+      settings = {
+	colors.background = "#1616164D";
+	colors.text = "#E2E0ECCC";
+	colors.selection-text = "#161616CC";
+	colors.selection-match = "#ECE0A8CC";
+	colors.match = "#ECE0A8CC";
+	colors.selection = "#78afe3CC";
+	colors.border = "#78afe3CC";
+	border.radius = 10;
+	border.width = 2;
+        main.width = 60;
+	main.font = "monospace:size=18";
+	main.prompt = "❯ ";
+      };
+    };
+
+    programs.kitty = {
+      enable = true;
+      environment = { };
+      keybindings = { };
+      settings = {
+        background_opacity = "0.7";
+        enable_audio_bell = false;
+        confirm_os_window_close  = 0;
+      };
+      extraConfig = ''
+        # The basic colors
+        foreground              #E2E0EC
+        background              #161616
+        selection_foreground    #D9E0EE
+        selection_background    #262626
+        
+        # Cursor colors
+        cursor                  #F5E0DC
+        cursor_text_color       #1E1E2E
+        
+        # URL underline color when hovering with mouse
+        url_color               #F5E0DC
+        
+        # kitty window border colors
+        active_border_color     #C9CBFF
+        inactive_border_color   #575268
+        bell_border_color       #FAE3B0
+        
+        # OS Window titlebar colors
+        wayland_titlebar_color system
+        macos_titlebar_color system
+        
+        #: Tab bar colors
+        active_tab_foreground   #F5C2E7
+        active_tab_background   #575268
+        inactive_tab_foreground #D9E0EE
+        inactive_tab_background #1E1E2E
+        tab_bar_background      #161320
+        
+        # Colors for marks (marked text in the terminal)
+        
+        mark1_foreground #1E1E2E
+        mark1_background #96CDFB
+        mark2_foreground #1E1E2E
+        mark2_background #F5C2E7
+        mark3_foreground #1E1E2E
+        mark3_background #B5E8E0
+        
+        #: black
+        color0 #262626
+        color8 #262626
+        #: red
+        color1 #E97193
+        color9 #E97193
+        #: green
+        color2  #AAC5A0
+        color10 #AAC5A0
+        #: yellow
+        color3  #ECE0A8
+        color11 #ECE0A8
+        #: blue
+        color4  #78afe3
+        color12 #78afe3
+        #: magenta
+        color5  #DFA7E7
+        color13 #DFA7E7
+        #: cyan
+        color6  #A8E5E6
+        color14 #A8E5E6
+        #: white
+        color7  #E2E0EC
+        color15 #E2E0EC
+      '';
+     };
+
+
+    programs.wlogout = {
+      enable = true;
+      layout = [
+	{
+	 label = "shutdown";
+	 action = "shutdown +0";
+	 text = "Touch Grass";
+	 keybind = "s";
+	 circular = true;
+	}
+	{
+	 label = "reboot";
+	 action = "reboot";
+	 text = "Restart?";
+	 keybind = "r";
+	 circular = true;
+	}
+	{
+	 label = "suspend";
+	 action = "sudo pm-suspend";
+	 text = "A Mimir";
+	 keybind = "h";
+	 circular = true;
+        }
+      ]; 
+    };
+
     programs.waybar = {
       enable = true;
+      # Styling Waybar
       style = ''
                * {
                  font-family: "JetBrainsMono Nerd Font";
                  font-size: 12pt;
                  font-weight: bold;
-                 border-radius: 8px;
                  transition-property: background-color;
                  transition-duration: 0.5s;
                }
@@ -318,39 +413,14 @@
                  background-color: transparent;
                }
                window > box {
-                 margin-left: 15px;
-                 margin-right: 15px;
-                 margin-top: 5px;
-                 background-color: rgba(22, 22, 22, 0.85);
-                 padding: 3px;
+                 background-color: rgba(0, 0, 0, 0.30);
                  padding-left:8px;
                  border: 2px #dfa7e7;
                }
-         #workspaces {
-                 padding-left: 0px;
-                 padding-right: 4px;
+         tooltip {
+                 background-color: rgba(22, 22, 22, 0.70);
                }
-         #workspaces button {
-                 padding-top: 5px;
-                 padding-bottom: 5px;
-                 padding-left: 6px;
-                 padding-right: 6px;
-               }
-         #workspaces button.active {
-                 background-color: rgb(181, 232, 224);
-                 color: rgb(26, 24, 38);
-               }
-         #workspaces button.urgent {
-                 color: rgb(26, 24, 38);
-               }
-         #workspaces button:hover {
-                 background-color: rgb(248, 189, 150);
-                 color: rgb(26, 24, 38);
-               }
-               tooltip {
-                 background-color: rgba(22, 22, 22, 0.85);
-               }
-               tooltip label {
+         tooltip label {
                  color: #E2E0EC;
                }
          #custom-launcher {
@@ -369,34 +439,22 @@
                /*     color: rgb(26, 24, 38); */
                /* } */
          #memory {
-                 color: #AAC5A0;
+                 color: #f2f4f8;
                }
          #cpu {
-                 color: #ECE0A8;
+                 color: #f2f4f8;
                }
          #clock {
-                 color: #E2E0EC;
-               }
-        /* #idle_inhibitor {
-                 color: rgb(221, 182, 242);
-               }*/
-         #custom-wall {
-                 color: #33ccff;
-            }
-         #temperature {
-                 color: #A8E5E6
-               }
-         #backlight {
-                 color: rgb(248, 189, 150);
+                 color: #78afe3;
                }
          #pulseaudio {
-                 color: #DFA7E7;
+                 color: #f2f4f8;
                }
          #network {
-                 color: #A8C5E6;
+                 color: #f2f4f8;
                }
          #network.disconnected {
-                 color: #A8E5E6;
+                 color: #f2f4f8;
                }
          #custom-powermenu {
                  color: rgb(242, 143, 173);
@@ -406,72 +464,114 @@
                  padding-right: 8px;
                  padding-left: 10px;
                }
-         #mpd.paused {
-                 color: #414868;
-                 font-style: italic;
-               }
-         #mpd.stopped {
-                 background: transparent;
-               }
-         #mpd {
-                 color: #c0caf5;
-               }
-         #custom-cava-internal{
-                 font-family: "Hack Nerd Font" ;
-                 color: #33ccff;
-               }
+	#cava.left, #cava.right {
+    		color: #78afe3;
+	}
+	#cava.left {
+    		border-radius: 10px;
+	}
+	#cava.right {
+	}
 	#workspaces {
-		padding: 0 14px;
-		
 	}
 	#workspaces button {
-    		padding: 1px 5px;
-    		background: transparent;
-    		color: #DFA7E7;
-	}
-	#workspaces button:hover {
-    		background: transparent;
-	   	color: #A8C5E6;
+    		color: #78afe3;
+		font-size: 24px;
 	}
 	#workspaces button.active {
-    		background: #DFA7E7;
-		color: #161616;
+		color: #78afe3;
+	}
+	#workspaces button:hover {
+  		box-shadow: none;
+  		text-shadow: none;
+    		background: none;
+    		border: none;
 	}
 	#workspaces button.urgent {
 	   	color: #11111b;
 	   	background: #fab387;
 	   	border-radius: 10px;
 	}
+	#custom-sep {
+		color: #75A6D7;
+		font-size: 18px;
+	}
       '';
+      # Configuring Waybar
       settings = [{
         "layer" = "top";
         "position" = "top";
         modules-left = [
           "custom/launcher"
 	 "hyprland/workspaces"
-	 "mpd"
         ];
         modules-center = [
-          "clock"
+	 "cava#right"
         ];
         modules-right = [
-          "pulseaudio"
+          "tray"
+          "network"
           "memory"
           "cpu"
-          "network"
-          "custom/powermenu"
-          "tray"
+          "pulseaudio"
+          "clock"
         ];
         "custom/launcher" = {
           "format" = " ";
-          #"on-click" = "pkill rofi || rofi2";
+          "on-click" = "pkill wlogout || wlogout";
           #"on-click-middle" = "exec default_wall";
-          #"on-click-right" = "exec wallpaper_random";
-          #"tooltip" = false;
-        };
-        "custom/cava-internal" = {
-          "exec" = "sleep 1s && cava | sed -u 's/;//g;s/0/▁/g;s/1/▂/g;s/2/▃/g;s/3/▄/g;s/4/▅/g;s/5/▆/g;s/6/▇/g;s/7/█/g;'";
+          "on-click-right" = "exec fuzzel";
           "tooltip" = false;
+        };
+	"cava#left" = {
+          "autosens" = 1;
+          "bar_delimiter" = 0;
+          "bars" = 18;
+          "format-icons" = [
+            "<span foreground='#cba6f7'>▁</span>"
+            "<span foreground='#cba6f7'>▂</span>"
+            "<span foreground='#cba6f7'>▃</span>"
+            "<span foreground='#cba6f7'>▄</span>"
+            "<span foreground='#89b4fa'>▅</span>"
+            "<span foreground='#89b4fa'>▆</span>"
+            "<span foreground='#89b4fa'>▇</span>"
+            "<span foreground='#89b4fa'>█</span>"
+          ];
+          "framerate" = 60;
+          "higher_cutoff_freq" = 10000;
+          "input_delay" = 0;
+          "lower_cutoff_freq" = 50;
+          "method" = "pipewire";
+          "monstercat" = false;
+          "reverse" = false;
+          "source" = "auto";
+          "stereo" = true;
+          "waves" = false;
+        };
+	"cava#right" = {
+          "autosens" = 1;
+          "bar_delimiter" = 0;
+          "bars" = 18;
+          "format-icons" = [
+            "<span foreground='#cba6f7'>▁</span>"
+            "<span foreground='#cba6f7'>▂</span>"
+            "<span foreground='#cba6f7'>▃</span>"
+            "<span foreground='#cba6f7'>▄</span>"
+            "<span foreground='#89b4fa'>▅</span>"
+            "<span foreground='#89b4fa'>▆</span>"
+            "<span foreground='#89b4fa'>▇</span>"
+            "<span foreground='#89b4fa'>█</span>"
+          ];
+          "framerate" = 60;
+          "higher_cutoff_freq" = 10000;
+          "input_delay" = 0;
+          "lower_cutoff_freq" = 50;
+          "method" = "pipewire";
+          "monstercat" = false;
+          "reverse" = false;
+          "source" = "auto";
+          "stereo" = true;
+          "waves" = false;
         };
         "pulseaudio" = {
           "scroll-step" = 1;
@@ -524,8 +624,7 @@
         };
         "custom/powermenu" = {
           "format" = "";
-          "on-click" = "pkill rofi || ~/.config/rofi/powermenu/type-3/powermenu.sh";
-          "tooltip" = false;
+          "on-click" = "pkill wlogout || wlogout";
         };
         "tray" = {
           "icon-size" = 15;
@@ -535,148 +634,89 @@
 	 "all-outputs" = true;
 	 "on-click" = "activate";
 	 "format" = "{icon}";
-	 "persistent_workspaces" = {
-	   "1" = [];
-	   "2" = [];
-	   "3" = [];
-	   "4" = [];
-	   "5" = [];
-	   "6" = [];
-	   "7" = [];
-	   "8" = [];
-	   "9" = [];
-	 };
+    	 "on-scroll-up" = "hyprctl dispatch workspace e+1";
+    	 "on-scroll-down" = "hyprctl dispatch workspace e-1";
 	 "format-icons" = {
-	   "1" = "I";
-	   "2" = "II";
-	   "3" = "III";
-	   "4" = "IV";
-	   "5" = "V";
-	   "6" = "VI";
-	   "7" = "VII";
-	   "8" = "VIII";
-	   "9" = "IX";
+	   "default" = "";
+	   "active" = "";
 	   "urgent" = "";
 	 };
+	};
+	"hyprland/window" = {
+	 "max-length" = 200;
+	 "separate-outputs" = true;
 	};
       }];
     };
 
-    programs.kitty = {
-     enable = true;
-     environment = { };
-     keybindings = { };
-     settings = {
-       background_opacity = "0.95";
-       enable_audio_bell = false;
-       confirm_os_window_close  = 0;
-     };
-     extraConfig = ''
-       # The basic colors
-       foreground              #E2E0EC
-       background              #161616
-       selection_foreground    #D9E0EE
-       selection_background    #575268
-       
-       # Transparent Background
-       background_opacity 0.8
-
-       # Cursor colors
-       cursor                  #F5E0DC
-       cursor_text_color       #1E1E2E
-       
-       # URL underline color when hovering with mouse
-       url_color               #F5E0DC
-       
-       # kitty window border colors
-       active_border_color     #C9CBFF
-       inactive_border_color   #575268
-       bell_border_color       #FAE3B0
-       
-       # OS Window titlebar colors
-       wayland_titlebar_color system
-       macos_titlebar_color system
-       
-       #: Tab bar colors
-       active_tab_foreground   #F5C2E7
-       active_tab_background   #575268
-       inactive_tab_foreground #D9E0EE
-       inactive_tab_background #1E1E2E
-       tab_bar_background      #161320
-       
-       # Colors for marks (marked text in the terminal)
-       
-       mark1_foreground #1E1E2E
-       mark1_background #96CDFB
-       mark2_foreground #1E1E2E
-       mark2_background #F5C2E7
-       mark3_foreground #1E1E2E
-       mark3_background #B5E8E0
-       
-       #: The 16 terminal colors
-       
-       #: black
-       color0 #2B273F
-       color8 #61588E
-       
-       #: red
-       color1 #E97193
-       color9 #E97193
-       
-       #: green
-       color2  #AAC5A0
-       color10 #AAC5A0
-       
-       #: yellow
-       color3  #ECE0A8
-       color11 #ECE0A8
-       
-       #: blue
-       color4  #A8C5E6
-       color12 #A8C5E6
-       
-       #: magenta
-       color5  #DFA7E7
-       color13 #DFA7E7
-       
-       #: cyan
-       color6  #A8E5E6
-       color14 #A8E5E6
-       
-       #: white
-       color7  #E2E0EC
-       color15 #E2E0EC
-     '';
+    gtk = {
+      enable = true;
+      cursorTheme.package = pkgs.bibata-cursors;
+      cursorTheme.name = "Bibata-Modern-Classic";
+      cursorTheme.size = 16;
+      iconTheme.package = pkgs.morewaita-icon-theme;
+      iconTheme.name = "MoreWaita";
+      gtk4.extraConfig = { gtk-application-prefer-dark-theme = 1; };
+      gtk3.extraConfig = { gtk-application-prefer-dark-theme = 1; };
     };
 
+    xsession.windowManager.i3 = {
+      enable = true;
+      package = pkgs.i3-gaps;
+
+      config = rec {
+        modifier = "Mod4";
+
+        window.border = 0;
+
+        gaps = {
+          inner = 0;
+          outer = 0;
+        };
+
+        keybindings = {
+          "XF86AudioMute" = "exec amixer set Master toggle";
+          "XF86AudioLowerVolume" = "exec amixer set Master 3%-";
+          "XF86AudioRaiseVolume" = "exec amixer set Master 3%+";
+          "XF86MonBrightnessDown" = "exec brightnessctl set 3%-";
+          "XF86MonBrightnessUp" = "exec brightnessctl set 3%+";
+          "${modifier}+Return" = "exec kitty";
+          "${modifier}+w" = "exec google-chrome-stable";
+          "${modifier}+z" = "kill";
+          "${modifier}+q" = "exec --no-startup-id dmenu_run";
+          "${modifier}+f" = "fullscreen";
+          "${modifier}+m" = "exit i3";
+          "${modifier}+s" = "exec escrotum -C && notify-send screenie!";
+          "${modifier}+k" = "exec killall vinegar";
+
+          "${modifier}+1" = "workspace 1";
+          "${modifier}+2" = "workspace 2";
+          "${modifier}+3" = "workspace 3";
+          "${modifier}+4" = "workspace 4";
+          "${modifier}+5" = "workspace 5";
+          "${modifier}+6" = "workspace 6";
+          "${modifier}+7" = "workspace 7";
+          "${modifier}+8" = "workspace 8";
+          "${modifier}+9" = "workspace 9";
+          "${modifier}+0" = "workspace 10";
+          "${modifier}+Shift+1" = "move container to workspace 1";
+          "${modifier}+Shift+2" = "move container to workspace 2";
+          "${modifier}+Shift+3" = "move container to workspace 3";
+          "${modifier}+Shift+4" = "move container to workspace 4";
+          "${modifier}+Shift+5" = "move container to workspace 5";
+          "${modifier}+Shift+6" = "move container to workspace 6";
+          "${modifier}+Shift+7" = "move container to workspace 7";
+          "${modifier}+Shift+8" = "move container to workspace 8";
+          "${modifier}+Shift+9" = "move container to workspace 9";
+          "${modifier}+Shift+0" = "move container to workspace 10";
+        };
+      };
+    };
     home.stateVersion = "23.11";
   };
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
