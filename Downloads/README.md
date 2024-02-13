@@ -1,1 +1,1 @@
-wallpaper.jpg is my background
+macos.jpg is my background
